@@ -157,7 +157,6 @@ In parallel we calculate a similarity between speech turns and co-occurring face
 These three probability matrices are combined into a big multi-modal matrix using weights $\alpha$ and $\beta$ to give more or less importance to a modality. These parameters advance or delay the merge of components of a modality relative to others during the agglomerative clustering process. The goal of this clustering is to merge all face tracks / speaker turns of same person into a unique cluster. This clustering integrates the knowledge of written names to both identify clusters and also to prevent wrong merges (avoiding the fusion of clusters named differently). A complete description of this method can be found in~\cite{POIGNANT--MTAP--2015}.
 
 For each identified cluster we list all shots (the shot segmentation was provided by the organizers) where they speak and appear on screen at the same time. A confidence score is computed for each (person, shot). This score is based on the temporal distance between the speaking face and its close written name. This confidence is equal to:
-
 \begin{align*}
   confidence = & \left\{ 
   	\begin{array}{ll}
@@ -174,6 +173,8 @@ With $d$ the co-occurrence duration and $\delta$ the gap duration between the fa
 
 
 \section{Results}
+
+The results below are based on the dump of the references from July 28 (before adjudication). 
 
 In table~\ref{tab:results} we detail the EwMAP, the MAP and the Correctness (noted C in the tables) (for these 3 metrics, higher is better, see~\cite{POIGNANT--MEDIAEVAL--2015} for more detail) obtained by the baseline and our system tune on an out domain corpus (for the first deadline: 01-jul-15) and tune on an in domain corpus (second deadline: 08-jul-15).
 
@@ -192,11 +193,11 @@ The baseline is a late propagation of written names onto speaker clusters (from 
 	limsi 08-jul-15 								& 84.56		& 84.89		& 94.11		\\
 	\hline
 	\hline
-	Oracle propagation 							& \multirow{2}{*}{96.84}		& \multirow{2}{*}{96.84}		& \multirow{2}{*}{97.25}		\\
-	mono-show									&			&			&			\\
+	Oracle propagation 	& \multirow{2}{*}{96.84}		& \multirow{2}{*}{96.84}		& \multirow{2}{*}{97.25}	\\
+	mono-show			&							&							&			\\
 	\hline
-	Oracle propagation 							& \multirow{2}{*}{97.83}		& \multirow{2}{*}{97.83}		& \multirow{2}{*}{97.83}		\\
-	cross-show 									&			&			&			\\
+	Oracle propagation 	& \multirow{2}{*}{97.83}		& \multirow{2}{*}{97.83}		& \multirow{2}{*}{97.83}	\\
+	cross-show 			&							&							&			\\
   	\hline
   \end{tabular}
   \caption{Results}
@@ -205,9 +206,9 @@ The baseline is a late propagation of written names onto speaker clusters (from 
 
 Two deadlines was proposed by the organizer, for the first one (1st july) we have tuned the $\alpha$, $\beta$ and the stop criterion of the clustering process on the dev set (out domain) and for the second deadline (8th july) we have tuned these parameters with the evaluation proposed via the leaderboard (computed on a sub-part of the test set). We can see a few improvement between the two tuning, shows that our method generalized well.
 
-To determine the scope for further progress we used an oracle who propagate a written names (extract automatically) on a shot if the corresponding person speaking and appear in this shot. The propagation can be mono-show (meaning a written names appearing in a video can be only propagate to shots of the same video) or cross-show (all shots of the corpus can be tagged by a written name). For the moment our method used only a propagation mono-show, it is possible to earn up to 1\% of MAP with propagation cross-show.
+To determine the scope for further progress we used an oracle who propagate a written name (extract automatically) on a shot if the corresponding person speaking and appear in this shot. The propagation can be mono-show (meaning that a written name appearing in a video can be only propagate to shots of the same video) or cross-show (all shots of the corpus can be tagged by a written name). For the moment our method used only a propagation mono-show, it is possible to earn up 1\% of MAP with propagation cross-show.
 
-In table~\ref{tab:precions_and_recall} we report the mean Precision and Recall over all queries. The high precision of our system made the choice of the confidence score (used to rank shots in the computation of the MAP) not really important. The tuning of the three parameters on a corpus in domain improve the recall about 1.3\% and decrease the precision about 0.8\%. In fact, the merge of speech turns together has been delayed relative to the merge of face tracks.
+In table~\ref{tab:precions_and_recall} we report the mean precision and recall over all queries. The high precision of our system made the choice of the confidence score (used to rank shots in the computation of the MAP) not really important. The tuning of the three parameters on a corpus in domain improve the recall about 1.3\% and decrease the precision about 0.8\%. In fact, the merge of speech turns together has been delayed relative to the merge of face tracks.
 
 \begin{table}[ht]
   \centering
@@ -224,10 +225,11 @@ In table~\ref{tab:precions_and_recall} we report the mean Precision and Recall o
   \label{tab:precions_and_recall}
 \end{table}
 
-In the next table (\ref{tab:errors}) we detail the numbers of queries 
+In the next table (\ref{tab:errors}) we detail the numbers of queries who was well or bad answered. From the 2070 queries, 634 correspond to persons who neither speak and appear in the shots selected on test set. For 14/15 of them, our system return shots (the half of them are due to annotations errors).
 
+On the 1436 remaining queries, we return at least one correct shot for 1251/1267 and 4/9 queries where no shot returns are correct. From the 44 queries without written names available and neither shot return, 33 hypotheses corresponding to the queries have too many transcription errors to be mapped with the reference.
 
-
+The 137 queries (01-jul-15) where a written name is available correspond to 648 shots in the reference. Only 214 of them were in a video where a written name is extracted, 434 of them need a cross-show propagation to be find (respectively 632, 199 and 433 for the second dead-line)
 
 
 \begin{table}[ht]
@@ -272,9 +274,6 @@ In the next table (\ref{tab:errors}) we detail the numbers of queries
   \label{tab:errors}
 \end{table}
 
-From the 44 queries without written names available and neither shot return, 33 hypotheses corresponding to the queries have too many transcription errors to be mapped with the reference.
-
-The 137 queries (01-jul-15) where a written name is available correspond to 648 shots in the reference. Only 214 of them were in a video where a written name is extracted, 434 of them need a cross-show propagation to be find (respectively 632, 199 and 433 for the second dead-line)
 
 
 \section{Conclusion and future works}
