@@ -141,20 +141,20 @@ We present the approach of the LIMSI team to the Person Discovery in Broadcast T
 
 \section{Framework}
 
-Figure~\ref{fig:gene} shows a global overview of our system. From a video, names written in a title box are extracted with the tool LOOV \cite{POIGNANT--ICME--2012}. In parallel, the audio signal is split into speaker turns and a similarity (normalized between 0 and 1) is compute based on the BIC criterion~\cite{CHEN--DARPA--1998}.
+Figure~\ref{fig:gene} shows a global overview of our system. From a video, the audio signal is split into speaker turns and a similarity (normalized between 0 and 1) is compute based on the BIC criterion~\cite{CHEN--DARPA--1998}. For the image stream, after a face detection and tracking step, we find facial landmarks~\cite{URICAR--VISAPP--2012} and then compute an HoG descriptor on these points. These descriptors are projected using the LDML approach~\cite{GUILLAUMIN--IJCV--2012}. The similarity between two face tracks (normalized between 0 and 1) is based on the l2 distance between their descriptor.
+
+We also calculate a similarity between speech turns and co-occurring face tracks and complete this third matrix for those that do not co-occur via a transitive face track and a transitive speaker turn. These complementary score correspond to the mean similarity of the best links. These three probability matrices are combined into a big multi-modal matrix using weights $\alpha$ and $\beta$ to give more or less importance to a modality. 
 
 \begin{figure}[htb]
  \centering
- \includegraphics[width=0.9\linewidth]{figs/schema_clus_contraint.pdf}
+ \includegraphics[width=1.0\linewidth]{figs/schema_clus_contraint.pdf}
  \caption {System overview}
  \label{fig:gene}
 \end{figure}
 
-For the image stream, after a face detection and tracking step, we find facial landmarks~\cite{URICAR--VISAPP--2012} and then compute an HoG descriptor on these points. These descriptors are projected using the LDML approach~\cite{GUILLAUMIN--IJCV--2012}. The similarity between two face tracks (normalized between 0 and 1) is based on the l2 distance between their descriptor.
+In parallel, names written in a title box are extracted with the tool LOOV \cite{POIGNANT--ICME--2012}. They are used to identify co-occurring face tracks and speech turns. 
 
-In parallel we calculate a similarity between speech turns and co-occurring face tracks and complete this third matrix for those that do not co-occur via a transitive face track and speaker turn.
-
-These three probability matrices are combined into a big multi-modal matrix using weights $\alpha$ and $\beta$ to give more or less importance to a modality. These parameters advance or delay the merge of components of a modality relative to others during the agglomerative clustering process. The goal of this clustering is to merge all face tracks / speaker turns of same person into a unique cluster. This clustering integrates the knowledge of written names to both identify clusters and also to prevent wrong merges (avoiding the fusion of clusters named differently). A complete description of this method can be found in~\cite{POIGNANT--MTAP--2015}.
+Finally, we perform an agglomerative clustering on the multi-modal matrix to merge all face tracks / speaker turns of same person into a unique cluster. This process is constrained by avoiding the fusion of clusters named differently. The two parameters $\alpha$ and $\beta$ advance or delay the merge of components of a modality relative to others during the agglomerative clustering process while the stop criterion is choice to maximize the target metrics (here the EwMAP). A complete description of this method can be found in~\cite{POIGNANT--MTAP--2015}.
 
 For each identified cluster we list all shots (the shot segmentation was provided by the organizers) where they speak and appear on screen at the same time. A confidence score is computed for each (person, shot). This score is based on the temporal distance between the speaking face and its close written name. This confidence is equal to:
 \begin{align*}
@@ -168,8 +168,6 @@ For each identified cluster we list all shots (the shot segmentation was provide
 \end{align*}
 
 With $d$ the co-occurrence duration and $\delta$ the gap duration between the face track / speech turn and the written name.
-
-
 
 
 \section{Results}
@@ -225,54 +223,54 @@ In table~\ref{tab:precions_and_recall} we report the mean precision and recall o
   \label{tab:precions_and_recall}
 \end{table}
 
-In the next table (\ref{tab:errors}) we detail the numbers of queries who was well or bad answered. From the 2070 queries, 634 correspond to persons who neither speak and appear in the shots selected on test set. For 14/15 of them, our system return shots (the half of them are due to annotations errors).
-
-On the 1436 remaining queries, we return at least one correct shot for 1251/1267 and 4/9 queries where no shot returns are correct. From the 44 queries without written names available and neither shot return, 33 hypotheses corresponding to the queries have too many transcription errors to be mapped with the reference.
-
-The 137 queries (01-jul-15) where a written name is available correspond to 648 shots in the reference. Only 214 of them were in a video where a written name is extracted, 434 of them need a cross-show propagation to be find (respectively 632, 199 and 433 for the second dead-line)
-
-
-\begin{table}[ht]
-  \centering
-  \begin{tabular}{|l|c|c|}
-    \hline
-			 											& 01-jul-15				& 08-jul-15				\\
-	\hline
-	\hline
-	\#queries \textcircled{\tiny{0}}						& \multicolumn{2}{|c|}{2070}						\\
-
-	\hline
-	\textcircled{\tiny{0}} without any speaking 			& \multicolumn{2}{|c|}{\multirow{2}{*}{634}}		\\
-	face in the reference \textcircled{\tiny{1}} 		& \multicolumn{2}{|c|}{} 						\\
-
-	\hline
-	\textcircled{\tiny{1}} where our system return		& \multirow{2}{*}{14}	& \multirow{2}{*}{15} 	\\
-	at least 1 shot										&  						&						\\
-
-	\hline
-	\textcircled{\tiny{0}} with at least 1 speaking		& \multicolumn{2}{|c|}{\multirow{2}{*}{1436}}	\\
-	face in the reference \textcircled{\tiny{2}}			& \multicolumn{2}{|c|}{} 						\\
-
-	\hline
-	\textcircled{\tiny{2}} with at least 1 correct shot	& \multirow{2}{*}{1251}	& \multirow{2}{*}{1267} 	\\
-	return 												&  						&						\\
-	
-	\hline
-	\textcircled{\tiny{2}} with all shots return wrong 	& 4						& 9				 		\\
-	
-	\hline
-	\textcircled{\tiny{2}} with written names available 	& \multirow{2}{*}{137}	& \multirow{2}{*}{116} 	\\
-	and no shot return 									&  						&						\\
-	
-	\hline
-	\textcircled{\tiny{2}} without written names			& \multicolumn{2}{|c|}{44 (33 written names} 	\\
-	available and neither shot return					& \multicolumn{2}{|c|}{with too many errors)} 	\\
-
-  	\hline
-  \end{tabular}
-  \caption{Detail on results}
-  \label{tab:errors}
-\end{table}
+%In the next table (\ref{tab:errors}) we detail the numbers of queries who was well or bad answered. From the 2070 queries, 634 correspond to persons who neither speak and appear in the shots selected on test set. For 14/15 of them, our system return shots (the half of them are due to annotations errors).
+%
+%On the 1436 remaining queries, we return at least one correct shot for 1251/1267 and 4/9 queries where no shot returns are correct. From the 44 queries without written names available and neither shot return, 33 hypotheses corresponding to the queries have too many transcription errors to be mapped with the reference.
+%
+%The 137 queries (01-jul-15) where a written name is available correspond to 648 shots in the reference. Only 214 of them were in a video where a written name is extracted, 434 of them need a cross-show propagation to be find (respectively 632, 199 and 433 for the second dead-line)
+%
+%
+%\begin{table}[ht]
+%  \centering
+%  \begin{tabular}{|l|c|c|}
+%    \hline
+%			 											& 01-jul-15				& 08-jul-15				\\
+%	\hline
+%	\hline
+%	\#queries \textcircled{\tiny{0}}						& \multicolumn{2}{|c|}{2070}						\\
+%
+%	\hline
+%	\textcircled{\tiny{0}} without any speaking 			& \multicolumn{2}{|c|}{\multirow{2}{*}{634}}		\\
+%	face in the reference \textcircled{\tiny{1}} 		& \multicolumn{2}{|c|}{} 						\\
+%
+%	\hline
+%	\textcircled{\tiny{1}} where our system return		& \multirow{2}{*}{14}	& \multirow{2}{*}{15} 	\\
+%	at least 1 shot										&  						&						\\
+%
+%	\hline
+%	\textcircled{\tiny{0}} with at least 1 speaking		& \multicolumn{2}{|c|}{\multirow{2}{*}{1436}}	\\
+%	face in the reference \textcircled{\tiny{2}}			& \multicolumn{2}{|c|}{} 						\\
+%
+%	\hline
+%	\textcircled{\tiny{2}} with at least 1 correct shot	& \multirow{2}{*}{1251}	& \multirow{2}{*}{1267} 	\\
+%	return 												&  						&						\\
+%	
+%	\hline
+%	\textcircled{\tiny{2}} with all shots return wrong 	& 4						& 9				 		\\
+%	
+%	\hline
+%	\textcircled{\tiny{2}} with written names available 	& \multirow{2}{*}{137}	& \multirow{2}{*}{116} 	\\
+%	and no shot return 									&  						&						\\
+%	
+%	\hline
+%	\textcircled{\tiny{2}} without written names			& \multicolumn{2}{|c|}{44 (33 written names} 	\\
+%	available and neither shot return					& \multicolumn{2}{|c|}{with too many errors)} 	\\
+%
+%  	\hline
+%  \end{tabular}
+%  \caption{Detail on results}
+%  \label{tab:errors}
+%\end{table}
 
 
 
