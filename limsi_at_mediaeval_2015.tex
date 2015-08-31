@@ -141,7 +141,9 @@ We present the approach of the LIMSI team to the Person Discovery in Broadcast T
 
 \section{Framework}
 
-Figure~\ref{fig:gene} shows a global overview of our system. From a video, the audio signal is split into speaker turns and a similarity (normalized between 0 and 1) is computed based on the BIC criterion~\cite{CHEN--DARPA--1998}. For the image stream, after a face detection and tracking step, we find facial landmarks~\cite{URICAR--VISAPP--2012} and then compute an HoG descriptor on these points. These descriptors are projected using the LDML approach~\cite{GUILLAUMIN--IJCV--2012}. The similarity between two face tracks (normalized between 0 and 1) is based on the L2 distance between their descriptor.
+Figure~\ref{fig:gene} shows a global overview of our system. From a video, the audio signal is split into speaker turns and a similarity (normalized between 0 and 1) is computed based on the BIC criterion~\cite{CHEN--DARPA--1998}. 
+
+For the image stream, after a face detection and tracking step, we find facial landmarks~\cite{URICAR--VISAPP--2012} and then compute an HoG descriptor on these points. These descriptors are projected using the LDML approach~\cite{GUILLAUMIN--IJCV--2012}. The similarity between two face tracks (normalized between 0 and 1) is based on the L2 distance between their descriptor.
 
 We also compute a sparse similarity matrix between speech turns and co-occurring face tracks, that is later completed as described in~\cite{POIGNANT--MTAP--2015}. These complementary score correspond to the mean similarity of the best links. These three probability matrices are combined into a large multi-modal matrix using weights $\alpha$ and $\beta$ to give more or less importance to a modality.
 
@@ -201,7 +203,7 @@ The baseline is a late propagation of written names onto speaker clusters (from 
   \label{tab:results}
 \end{table}
 
-Two deadlines were proposed by the organizers. For the first one (July 1st) wetuned the parameters $\alpha$ and $\beta$ and the stopping criterion of the clustering process on the out-domain development set. For the second deadline (July 8th), we tuned these parameters with the evaluation proposed via the leaderboard (computed every six hours on a subset of the test set). We can see only a little improvement between them, showing that our method generalizes well.
+Two deadlines were proposed by the organizers. For the first one (July 1st) we tuned the parameters $\alpha$ and $\beta$ and the stopping criterion of the clustering process on the out-domain development set. For the second deadline (July 8th), we tuned these parameters with the evaluation proposed via the leaderboard (computed every six hours on a subset of the test set). We can see only a little improvement between them, showing that our method generalizes well.
 
 To determine the scope for further progress we used an oracle capable of recognizing a speaking face as soon as his/her written name is correctly extracted by the OCR module. In the mono-show case, the name must be written in the same video. In the cross-show case, the name can be written in any video of the corpus. Since our own approach only uses mono-show propagation, these oracle experiments show it is possible to earn up to 1\% of MAP using cross-show propagation approaches.
 
