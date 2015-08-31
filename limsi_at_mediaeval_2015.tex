@@ -72,7 +72,7 @@
 %\crdata{0-12345-67-8/90/01}  % Allows default copyright data (0-89791-88-6/97/05) to be over-ridden - IF NEED BE.
 % --- End of Author Metadata ---
 
-\title{Limsi at MediaEval 2015: \\ Person Discovery in Broadcast TV Task}
+\title{LIMSI at MediaEval 2015: \\ Person Discovery in Broadcast TV Task}
 %
 % You need the command \numberofauthors to handle the 'placement
 % and alignment' of the authors beneath the title.
@@ -130,20 +130,20 @@ Johann Poignant, Herv\'e Bredin, Claude Barras \\
 \maketitle
 \begin{abstract}
 
-This paper describe the algorithm tested by the LIMSI team in the MediaEval 2015 Person Discovery in Broadcast TV Task. For this task we used an audio/video diarization process constrained by written names on screen. These names are used to both to identify clusters and to prevent the fusion of two clusters named differently. This method, adapted to answer to the task, obtained 83.1\% of EwMAP tuned on an out domain corpus.
+This paper describes the algorithm tested by the LIMSI team in the MediaEval 2015 Person Discovery in Broadcast TV Task. For this task we used an audio/video diarization process constrained by names written on screen. These names are used to both identify clusters and prevent the fusion of two clusters with different co-occurring names. This method obtained 83.1\% of EwMAP tuned on the out-domain development corpus.
 
 \end{abstract}
 
 
 \section{Introduction}
 
-We present the approach of the LIMSI team to the Person Discovery in Broadcast TV Task at MediaEval 2015. To answer this task we had to return the names of people who can be both seen as well as heard in a selection of shots in a collection of videos. The list of people is not known \emph{a priori} and their names must be discovered in an unsupervised way from media content using text overlay or speech transcripts. For further details about the study case, dataset and metrics the reader can referred the task description~\cite{POIGNANT--MEDIAEVAL--2015}. 
+We present the approach of the LIMSI team to the Person Discovery in Broadcast TV Task at MediaEval 2015. To address this task we had to return the names of people who can be both seen as well as heard in a selection of shots in a collection of videos. The list of people is not known \emph{a priori} and their names must be discovered in an unsupervised way from media content using text overlay or speech transcripts. For further details about the task, dataset and metrics the reader can refer to the task description~\cite{POIGNANT--MEDIAEVAL--2015}.
 
 \section{Framework}
 
-Figure~\ref{fig:gene} shows a global overview of our system. From a video, the audio signal is split into speaker turns and a similarity (normalized between 0 and 1) is compute based on the BIC criterion~\cite{CHEN--DARPA--1998}. For the image stream, after a face detection and tracking step, we find facial landmarks~\cite{URICAR--VISAPP--2012} and then compute an HoG descriptor on these points. These descriptors are projected using the LDML approach~\cite{GUILLAUMIN--IJCV--2012}. The similarity between two face tracks (normalized between 0 and 1) is based on the l2 distance between their descriptor.
+Figure~\ref{fig:gene} shows a global overview of our system. From a video, the audio signal is split into speaker turns and a similarity (normalized between 0 and 1) is computed based on the BIC criterion~\cite{CHEN--DARPA--1998}. For the image stream, after a face detection and tracking step, we find facial landmarks~\cite{URICAR--VISAPP--2012} and then compute an HoG descriptor on these points. These descriptors are projected using the LDML approach~\cite{GUILLAUMIN--IJCV--2012}. The similarity between two face tracks (normalized between 0 and 1) is based on the L2 distance between their descriptor.
 
-We also calculate a similarity between speech turns and co-occurring face tracks and complete this third matrix for those that do not co-occur via a transitive face track and a transitive speaker turn. These complementary score correspond to the mean similarity of the best links. These three probability matrices are combined into a big multi-modal matrix using weights $\alpha$ and $\beta$ to give more or less importance to a modality. 
+We also compute a sparse similarity matrix between speech turns and co-occurring face tracks, that is later completed as described in~\cite{POIGNANT--MTAP--2015}. These complementary score correspond to the mean similarity of the best links. These three probability matrices are combined into a large multi-modal matrix using weights $\alpha$ and $\beta$ to give more or less importance to a modality.
 
 \begin{figure}[htb]
  \centering
@@ -152,31 +152,30 @@ We also calculate a similarity between speech turns and co-occurring face tracks
  \label{fig:gene}
 \end{figure}
 
-In parallel, names written in a title box are extracted with the tool LOOV \cite{POIGNANT--ICME--2012}. They are used to identify co-occurring face tracks and speech turns. 
+In parallel, names written in title boxes are extracted with the LOOV tool~\cite{POIGNANT--ICME--2012}. They are used to identify co-occurring face tracks and speech turns.
 
-Finally, we perform an agglomerative clustering on the multi-modal matrix to merge all face tracks / speaker turns of same person into a unique cluster. This process is constrained by avoiding the fusion of clusters named differently. The two parameters $\alpha$ and $\beta$ advance or delay the merge of components of a modality relative to others during the agglomerative clustering process while the stop criterion is choice to maximize the target metrics (here the EwMAP). A complete description of this method can be found in~\cite{POIGNANT--MTAP--2015}.
+Finally, we perform an agglomerative clustering on the multi-modal matrix to merge all face tracks and speech turns of a same person into a unique cluster. This process is constrained by avoiding the fusion of clusters named differently. The two parameters $\alpha$ and $\beta$ advance or delay the merge of components of a modality relatively to others during the agglomerative clustering process while the stop criterion is chosen to maximize the target metrics (here the EwMAP). A complete description of this method can be found in~\cite{POIGNANT--MTAP--2015}.
 
-For each identified cluster we list all shots (the shot segmentation was provided by the organizers) where they speak and appear on screen at the same time. A confidence score is computed for each (person, shot). This score is based on the temporal distance between the speaking face and its close written name. This confidence is equal to:
+For each identified cluster, we list all shots (the shot segmentation was provided by the organizers) where the corresponding person speaks and appears on screen at the same time. A confidence score is computed for each (person, shot) pair. This score is based on the temporal distance between the speaking face and its closest written name. This confidence equals to:
 \begin{align*}
-  confidence = & \left\{ 
+  \text{confidence} = & \left\{
   	\begin{array}{ll}
   		1/d  & \mbox{if the speaking face co-occur}  \\
   		 	 & \mbox{the written name}		\\
   		1+\delta &\mbox{otherwise}
-  	\end{array} 
+  	\end{array}
   \right.
 \end{align*}
 
-With $d$ the co-occurrence duration and $\delta$ the gap duration between the face track / speech turn and the written name.
-
+\noindent where $d$ is the co-occurrence duration and $\delta$ is the duration of the gap between the face track (or speech turn) and the written name.
 
 \section{Results}
 
-The results below are based on the dump of the references from July 28 (before adjudication). 
+The results below are based on the dump of the references from July 28 (before adjudication).
 
-In table~\ref{tab:results} we detail the EwMAP, the MAP and the Correctness (noted C in the tables) (for these 3 metrics, higher is better, see~\cite{POIGNANT--MEDIAEVAL--2015} for more detail) obtained by the baseline and our system tune on an out domain corpus (for the first deadline: 01-jul-15) and tune on an in domain corpus (second deadline: 08-jul-15).
+In Table~\ref{tab:results}, we report the EwMAP, the MAP and the Correctness (denoted by $C$ ) obtained by the baseline and our system tuned on an out-domain corpus (for the first deadline: 01-jul-15) and on an in-domain corpus (second deadline: 08-jul-15).
 
-The baseline is a late propagation of written names onto speaker clusters (from a classical diarization) followed by a propagation of speaker names onto co-occurring speaking faces. This baseline don't take into account the similarity between face and does not benefit from the knowledge of written names during the diarization process. In addition to these 2 additional information, our method maximizes the stop criterion of the clustering based on the target metric (EwMAP) while the diarization of the baseline is perform to maximize the classical DER. 
+The baseline is a late propagation of written names onto speaker clusters (from a classical diarization) followed by a propagation of speaker names onto co-occurring speaking faces. This baseline does not take into account the similarity between face and does not benefit from the knowledge of written names during the diarization process. In addition to these 2 additional information, our method maximizes the stop criterion of the clustering based on the target metric (EwMAP) while the diarization of the baseline is tuned to maximize the classical DER.
 
 \begin{table}[ht]
   \centering
@@ -202,11 +201,12 @@ The baseline is a late propagation of written names onto speaker clusters (from 
   \label{tab:results}
 \end{table}
 
-Two deadlines was proposed by the organizer, for the first one (1st july) we have tuned the $\alpha$, $\beta$ and the stop criterion of the clustering process on the dev set (out domain) and for the second deadline (8th july) we have tuned these parameters with the evaluation proposed via the leaderboard (computed on a sub-part of the test set). We can see a few improvement between the two tuning, shows that our method generalized well.
+Two deadlines were proposed by the organizers. For the first one (July 1st) wetuned the parameters $\alpha$ and $\beta$ and the stopping criterion of the clustering process on the out-domain development set. For the second deadline (July 8th), we tuned these parameters with the evaluation proposed via the leaderboard (computed every six hours on a subset of the test set). We can see only a little improvement between them, showing that our method generalizes well.
 
-To determine the scope for further progress we used an oracle who propagate a written name (extract automatically) on a shot if the corresponding person speaking and appear in this shot. The propagation can be mono-show (meaning that a written name appearing in a video can be only propagate to shots of the same video) or cross-show (all shots of the corpus can be tagged by a written name). For the moment our method used only a propagation mono-show, it is possible to earn up 1\% of MAP with propagation cross-show.
+To determine the scope for further progress we used an oracle capable of recognizing a speaking face as soon as his/her written name is correctly extracted by the OCR module. In the mono-show case, the name must be written in the same video. In the cross-show case, the name can be written in any video of the corpus. Since our own approach only uses mono-show propagation, these oracle experiments show it is possible to earn up to 1\% of MAP using cross-show propagation approaches.
 
-In table~\ref{tab:precions_and_recall} we report the mean precision and recall over all queries. The high precision of our system made the choice of the confidence score (used to rank shots in the computation of the MAP) not really important. The tuning of the three parameters on a corpus in domain improve the recall about 1.3\% and decrease the precision about 0.8\%. In fact, the merge of speech turns together has been delayed relative to the merge of face tracks.
+In Table~\ref{tab:precions_and_recall} we report the mean precision and recall over all queries. The high precision of our system made the choice of the confidence score (used to rank shots in the computation of the MAP) not really important. The tuning of the three parameters on an in-domain corpus improves recall by 1.3\% and decreases precision by 0.8\%.
+In practice, speech turns clustering was delayed (with respect to face tracks clustering) between July 1st (out-domain) and July 8th (in-domain tuning).
 
 \begin{table}[ht]
   \centering
@@ -219,7 +219,7 @@ In table~\ref{tab:precions_and_recall} we report the mean precision and recall o
 	limsi 08-jul-15 	& 97.7			& 84.2			\\
   	\hline
   \end{tabular}
-  \caption{mean precision and recall}
+  \caption{Mean precision and recall}
   \label{tab:precions_and_recall}
 \end{table}
 
@@ -254,14 +254,14 @@ In table~\ref{tab:precions_and_recall} we report the mean precision and recall o
 %	\hline
 %	\textcircled{\tiny{2}} with at least 1 correct shot	& \multirow{2}{*}{1251}	& \multirow{2}{*}{1267} 	\\
 %	return 												&  						&						\\
-%	
+%
 %	\hline
 %	\textcircled{\tiny{2}} with all shots return wrong 	& 4						& 9				 		\\
-%	
+%
 %	\hline
 %	\textcircled{\tiny{2}} with written names available 	& \multirow{2}{*}{137}	& \multirow{2}{*}{116} 	\\
 %	and no shot return 									&  						&						\\
-%	
+%
 %	\hline
 %	\textcircled{\tiny{2}} without written names			& \multicolumn{2}{|c|}{44 (33 written names} 	\\
 %	available and neither shot return					& \multicolumn{2}{|c|}{with too many errors)} 	\\
@@ -276,18 +276,15 @@ In table~\ref{tab:precions_and_recall} we report the mean precision and recall o
 
 \section{Conclusion and future works}
 
-This paper presented our approach and results at the MediaEval Person Discovery in Broadcast TV task. The process used an audio/video diarization constraint by written names on screen. 
-This source of identities is used to both identify clusters and also to avoid wrong merge between cluster during the agglomerative clustering process.
+This paper presented our approach and results at the MediaEval Person Discovery in Broadcast TV task. The process used an audio/video diarization constrained by written names on screen.
+This source of identities is used to both identify clusters and avoid wrong merges during the agglomerative clustering process.
 
-For future works we will improve the distance between speech turns, try other clustering methods and cross-show propagation. 
+For future works we will improve the distance between speech turns, try other clustering methods and cross-show propagation.
 
 
 \section{Acknowledgment}
 
-This work was supported by the French National Agency for Research under grant ANR-12-CHRI-0006-01.
-The open source CAMOMILE collaborative annotation platform\footnote{\url{http://github.com/camomile-project}} was used extensively throughout the progress of the task: from the run submission script to the automated leaderboard, including \emph{a posteriori} collaborative annotation of the test corpus.
-
-
+This work was supported by the French National Agency for Research under grant ANR-12-CHRI-0006-01 (CAMOMILE project).
 
 % The following two commands are all you need in the
 % initial runs of your .tex file to
