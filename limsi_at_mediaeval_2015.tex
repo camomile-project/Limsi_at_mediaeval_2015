@@ -153,7 +153,7 @@ After the written names extraction, face detection and tracking, and speech turn
  \label{fig:gene}
 \end{figure}
 
-Afterwards, we name speakers with the "Direct Speech Turn Tagging" method describe in~\cite{POIGNANT--INTERSPEECH--2012}. We, first, tagged speech turns with exactly one co-occurring written name, then on the remaining unnamed speech turns we find the one-to-one mapping that maximizes the co-occurrence duration between speaker clusters and written names (see~\cite{POIGNANT--INTERSPEECH--2012} for more details). Finally, we propagate the speaker identities on the co-occurring face tracks based on the speech turns/face tracks mapping.
+Afterwards, we name speakers with the "Direct Speech Turn Tagging" method describe in~\cite{POIGNANT--INTERSPEECH--2012}. We first tagged speech turns with exactly one co-occurring written name, then on the remaining unnamed speech turns we find the one-to-one mapping that maximizes the co-occurrence duration between speaker clusters and written names (see~\cite{POIGNANT--INTERSPEECH--2012} for more details). Finally, we propagate the speaker identities on the co-occurring face tracks based on the speech turns/face tracks mapping.
 
 \section{Naming multi-modal clusters}
 
@@ -193,7 +193,7 @@ The results below are based on the dump of the references from July 28 (before a
 
 In Table~\ref{tab:results}, we report the EwMAP, the MAP and the Correctness (denoted by $C$ ) obtained by the baseline and our system tuned on an out-domain corpus (for the first deadline: 01-jul-15) and on an in-domain corpus (second deadline: 08-jul-15).
 
-The baseline does not take into account the similarity between face and does not benefit from the knowledge of written names during the diarization process. In addition to these 2 additional information, our method maximizes the stop criterion of the clustering based on the target metric (EwMAP) while the diarization of the baseline is tuned to maximize the classical DER. 
+The baseline does not take into account the similarity between face and does not benefit from the knowledge of written names during the diarization process. In addition to these 2 additional information, our second method maximizes the stop criterion of the clustering based on the target metric (EwMAP) while the diarization of the baseline is tuned to maximize the classical DER. 
 
 \begin{table}[ht]
   \centering
@@ -223,7 +223,7 @@ Two deadlines were proposed for this evaluation. For the first one (July 1st) we
 
 To determine the scope for further progress we used an oracle capable of recognizing a speaking face as soon as his/her written name is correctly extracted by the OCR module. In the mono-show case, the name must be written in the same video. In the cross-show case, the name can be written in any video of the corpus. Since our own approach only uses mono-show propagation, these oracle experiments show it is possible to earn up to 1\% of MAP using cross-show propagation approaches.
 
-In Table~\ref{tab:precions_and_recall} we report the mean precision and recall over all queries. Compared to the baseline, the constraints on the clustering process allows to have a lower stop criterion (therefore to have bigger clusters and hence to improved the recall), while keeping very good clusters purity (see the precision in table~\ref{tab:precions_and_recall}). The high precision of our system made the choice of the confidence score (used to rank shots in the computation of the MAP) not really important. The tuning of the three parameters on an in-domain corpus improves recall by 1.3\% and decreases precision by 0.8\%. In practice, $\alpha$ was reduced for the July 8th (in-domain tuning), therefore speech turns clustering was delayed (with respect to face tracks clustering) between July 1st (out-domain) and July 8th (in-domain tuning). 
+In Table~\ref{tab:precions_and_recall} we report the mean precision and recall over all queries. Compared to the baseline, the constraints on the clustering process allows to have a lower stop criterion (therefore to have bigger clusters and hence to improved the recall), while keeping very good clusters purity (see the precision in table~\ref{tab:precions_and_recall}). The high precision of our constraint clustering made the choice of the confidence score (used to rank shots in the computation of the MAP) not really important. The tuning of the three parameters on an in-domain corpus improves recall by 1.3\% and decreases precision by 0.8\%. In practice, $\alpha$ was reduced for the July 8th (in-domain tuning), therefore speech turns clustering was delayed (with respect to face tracks clustering) between July 1st (out-domain) and July 8th (in-domain tuning). 
 
 \begin{table}[ht]
   \centering
