@@ -137,23 +137,23 @@ This paper describes the algorithm tested by the LIMSI team in the MediaEval 201
 
 \section{Introduction}
 
-We present the approach of the LIMSI team to the Person Discovery in Broadcast TV Task at MediaEval 2015. To address this task we had to return the names of people who can be both seen as well as heard in a selection of shots in a collection of videos. The list of people is not known \emph{a priori} and their names must be discovered in an unsupervised way from media content using text overlay or speech transcripts. For further details about the task, dataset and metrics the reader can refer to the task description~\cite{POIGNANT--MEDIAEVAL--2015}. 
+We present the approach of the LIMSI team to the Person Discovery in Broadcast TV Task at MediaEval 2015. To address this task we had to return the names of people who can be both seen as well as heard in a selection of shots in a collection of videos. The list of people is not known \emph{a priori} and their names must be discovered in an unsupervised way from media content using text overlay or speech transcripts. For further details about the task, dataset and metrics the reader can refer to the task description~\cite{POIGNANT--MEDIAEVAL--2015}.
 
-We first detail the fusion system baseline provided to all participants (we are both organizer and participant), then we describe the constrained multi-modal clustering and finally we compared the results obtained.
+We first detail the fusion system baseline provided to all participants (we are both organizer and participant). Then, we describe the constrained multi-modal clustering. Finally, we compare the results obtained.
 
 \section{Multi-modal fusion}
 
-We proposed two different approach to answered the task. They only used metadata provided to all participants (see Table~\ref{tab:subcomp}). Only written names are used as source of identity. In addition to the speech turns segmentation and the faces detection and tracking, the baseline used the speaker diarization and the speaking face mapping. The constrained clustering rather has used the similarity matrix (for speaker and face) to process its own clustering.
+We propose two different approaches to address the task. They only rely on metadata provided to all participants (see Table~\ref{tab:subcomp}). Only written names are used as source of identity. In addition to speech turn segmentation and face detection and tracking, the baseline relies on the provided speaker diarization and speaking face mapping. The constrained clustering relies on the similarity matrices (for speaker and face) to process its own clustering.
 
 \begin{table}[ht]
   \centering
   \begin{tabular}{|l|c|c|}
     \hline
-	\multirow{2}{*}{Sub-component}	& \multirow{2}{*}{Baseline}	& Constrained 		\\
+	\multirow{2}{*}{Components}	& \multirow{2}{*}{Baseline}	& Constrained 		\\
 									&							& clustering 		\\
 	\hline
 	\hline
-	\multicolumn{3}{|c|}{Speech turns}												\\	 
+	\multicolumn{3}{|c|}{Speech turns}												\\
 	\hline
 	Segmentation						&			x				&		x			\\
 	Similarity						&							&		x			\\
@@ -169,7 +169,7 @@ We proposed two different approach to answered the task. They only used metadata
 	\hline
 	Mapping							&			x				&		x			\\
 	\hline
-	\multicolumn{3}{|c|}{Source of names}											\\	 
+	\multicolumn{3}{|c|}{Source of names}											\\
 	\hline
 	Written names~\cite{POIGNANT--ICME--2012}	&		x		&		x			\\
 	Pronounced names~\cite{LAMEL--IWSLT--2011, DIANRELLI--IJCNLP--2011}	&	&		\\
@@ -182,7 +182,7 @@ We proposed two different approach to answered the task. They only used metadata
 
 \subsection{Baseline}
 
-From the written names and the speaker diarization, we used the "Direct Speech Turn Tagging" method described in~\cite{POIGNANT--INTERSPEECH--2012} to identify speaker: we first tagged speech turns with exactly one co-occurring written name, then on the remaining unnamed speech turns we find the one-to-one mapping that maximizes the co-occurrence duration between speaker clusters and written names (see~\cite{POIGNANT--INTERSPEECH--2012} for more details). Finally, we propagate the speaker identities on the co-occurring face tracks based on the speech turns/face tracks mapping.
+From the written names and the speaker diarization, we used the ``Direct Speech Turn Tagging'' method described in~\cite{POIGNANT--INTERSPEECH--2012} to identify speaker: we first tagged speech turns with exactly one co-occurring written name. Then, on the remaining unnamed speech turns, we find the one-to-one mapping that maximizes the co-occurrence duration between speaker clusters and written names (see~\cite{POIGNANT--INTERSPEECH--2012} for more details). Finally, we propagate the speaker identities on the co-occurring face tracks based on the speech turns/face tracks mapping.
 
 \begin{figure}[htb]
  \centering
@@ -192,9 +192,9 @@ From the written names and the speaker diarization, we used the "Direct Speech T
 \end{figure}
 
 
-\subsection{Constrain the multi-modal clustering}
+\subsection{Constrained multi-modal clustering}
 
-Figure~\ref{fig:gene} shows a global overview of our method. We first combined the mono-modal similarity matrix and the speaking face mapping into a large multi-modal matrix using weights $\alpha$ and $\beta$ to give more or less importance to a given modality. In parallel, names written are used to identify co-occurring face tracks and speech turns.
+Figure~\ref{fig:gene} shows a global overview of our method. We first combined the mono-modal similarity matrix and the speaking face mapping into a large multi-modal matrix using weights $\alpha$ and $\beta$ to give more or less importance to a given modality. In parallel, written names are used to identify co-occurring face tracks and speech turns.
 
 \begin{figure}[htb]
  \centering
@@ -203,11 +203,11 @@ Figure~\ref{fig:gene} shows a global overview of our method. We first combined t
  \label{fig:gene}
 \end{figure}
 
-Then, we perform an agglomerative clustering on the multi-modal matrix to merge all face tracks and speech turns of a same person into a unique cluster. This process is constrained by avoiding the fusion of clusters named differently. The two parameters $\alpha$ and $\beta$ advance or delay the merge of components of a modality relatively to others during the agglomerative clustering process, while the stop criterion is chosen to maximize the target metrics (here the EwMAP). A complete description of this method can be found in~\cite{POIGNANT--MTAP--2015}. 
+Then, we perform an agglomerative clustering on the multi-modal matrix to merge all face tracks and speech turns of a same person into a unique cluster. This process is constrained by avoiding the fusion of clusters named differently. The two parameters $\alpha$ and $\beta$ advance or delay the merge of components of a modality relatively to others during the agglomerative clustering process, while the stopping criterion is chosen to maximize the target metrics (here the EwMAP). A complete description of this method can be found in~\cite{POIGNANT--MTAP--2015}.
 
 \subsection{Speaking face selection and confidence}
 
-The last part is common for the two fusions. For each person that speak and appear in a shot (following the shot segmentation provided to all participants), we compute a confidence score. This score is based on the temporal distance between the speaking face and its closest written name. This confidence equals to:
+The last part is common for the two fusions. For each person who speaks and appears in a shot (following the shot segmentation provided to all participants), we compute a confidence score. This score is based on the temporal distance between the speaking face and its closest written name. This confidence equals to:
 \begin{align*}
   \text{confidence} = & \left\{
   	\begin{array}{ll}
@@ -224,7 +224,7 @@ The last part is common for the two fusions. For each person that speak and appe
 
 In Table~\ref{tab:results}, we report the EwMAP, the MAP and the Correctness (denoted by $C$ ) obtained by the baseline and our system tuned on an out-domain corpus (for the first deadline: 01-jul-15) and on an in-domain corpus (second deadline: 08-jul-15).
 
-The baseline does not take into account the similarity between face and does not benefit from the knowledge of written names during the diarization process. In addition to these 2 additional information, our second method maximizes the stop criterion of the clustering based on the target metric (EwMAP) while the diarization of the baseline is tuned to maximize the classical DER. 
+The baseline does not take into account the similarity between face and does not benefit from the knowledge of written names during the diarization process. In addition to these 2 additional information, our second method optimizes the stopping criterion of the clustering based on the target metric (EwMAP) while the diarization of the baseline is tuned to maximize the classical DER.
 
 
 \begin{table}[ht]
@@ -255,7 +255,7 @@ For the first deadline (July 1st) we tuned the parameters $\alpha$ and $\beta$ a
 
 To determine the scope for further progress we used an oracle capable of recognizing a speaking face as soon as his/her written name is correctly extracted by the OCR module. In the mono-show case, the name must be written in the same video. In the cross-show case, the name can be written in any video of the corpus. Since our own approach only uses mono-show propagation, these oracle experiments show it is possible to earn up to 1\% of MAP using cross-show propagation approaches.
 
-In Table~\ref{tab:precions_and_recall} we report the mean precision and recall over all queries. Compared to the baseline, the constraints on the clustering process allows to have a lower stop criterion (therefore to have bigger clusters and hence to improved the recall), while keeping very good clusters purity (see the precision in Table~\ref{tab:precions_and_recall}). The high precision of our constraint clustering made the choice of the confidence score (used to rank shots in the computation of the MAP) not really important. The tuning of the three parameters on an in-domain corpus improves recall by 1.3\% and decreases precision by 0.8\%. In practice, $\alpha$ was reduced for the July 8th (in-domain tuning), therefore speech turns clustering was delayed (with respect to face tracks clustering) between July 1st (out-domain) and July 8th (in-domain tuning). 
+In Table~\ref{tab:precions_and_recall} we report the mean precision and recall over all queries. Compared to the baseline, the constraints on the clustering process allows to have a lower stopping criterion (therefore to have bigger clusters and hence to improve the recall), while keeping very good clusters purity (see the precision in Table~\ref{tab:precions_and_recall}). The high precision of our constraint clustering made the choice of the confidence score (used to rank shots in the computation of the MAP) not really important. The tuning of the three parameters on an in-domain corpus improves recall by 1.3\% and decreases precision by 0.8\%. In practice, $\alpha$ was reduced for the July 8th (in-domain tuning), therefore speech turns clustering was delayed (with respect to face tracks clustering) between July 1st (out-domain) and July 8th (in-domain tuning).
 
 \begin{table}[ht]
   \centering
