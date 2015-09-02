@@ -182,7 +182,7 @@ We propose two different approaches to address the task. They only rely on metad
 
 \subsection{Baseline}
 
-From the written names and the speaker diarization, we used the ``Direct Speech Turn Tagging'' method described in~\cite{POIGNANT--INTERSPEECH--2012} to identify speaker: we first tagged speech turns with exactly one co-occurring written name. Then, on the remaining unnamed speech turns, we find the one-to-one mapping that maximizes the co-occurrence duration between speaker clusters and written names (see~\cite{POIGNANT--INTERSPEECH--2012} for more details). Finally, we propagate the speaker identities on the co-occurring face tracks based on the speech turns/face tracks mapping.
+From the written names and the speaker diarization, we used the ``Direct Speech Turn Tagging'' method described in~\cite{POIGNANT--INTERSPEECH--2012} to identify speaker: we first tagged speech turns with co-occurring written name. Then, on the remaining unnamed speech turns, we find the one-to-one mapping that maximizes the co-occurrence duration between speaker clusters and written names (see~\cite{POIGNANT--INTERSPEECH--2012} for more details). Finally, we propagate the speaker identities on the co-occurring face tracks based on the speech turns/face tracks mapping.
 
 \begin{figure}[htb]
  \centering
