@@ -222,7 +222,7 @@ The last part is common for the two fusions. For each person who speaks and appe
 
 \section{Results}
 
-In Table~\ref{tab:results}, we report the EwMAP, the MAP and the Correctness (denoted by $C$ ) obtained by the baseline and our system tuned on an out-domain corpus (for the first deadline: 01-jul-15) and on an in-domain corpus (second deadline: 08-jul-15).
+In Table~\ref{tab:results}, we report the EwMAP, the MAP and the Correctness (denoted by $C$ ) obtained by the baseline and the constrained clustering tuned on an out-domain corpus (for the first deadline: 01-jul-15) and on an in-domain corpus (second deadline: 08-jul-15).
 
 The baseline does not take into account the similarity between face and does not benefit from the knowledge of written names during the diarization process. In addition to these 2 additional information, our second method optimizes the stopping criterion of the clustering based on the target metric (EwMAP) while the diarization of the baseline is tuned to maximize the classical DER.
 
@@ -231,13 +231,13 @@ The baseline does not take into account the similarity between face and does not
   \centering
   \begin{tabular}{|l|c|c|c|}
     \hline
-	Run 											& EwMAP(\%)	& MAP(\%)	& C(\%) \\
+	Run 						& EwMAP(\%)	& MAP(\%)	& C(\%) \\
 	\hline
 	\hline
-	baseline										& 78.35		& 78.64		& 92.71		\\
+	Baseline					& 78.35		& 78.64		& 92.71		\\
 	\hline
-	limsi 01-jul-15 								& 83.13		& 83.46		& 93.19		\\
-	limsi 08-jul-15 								& 84.56		& 84.89		& 94.11		\\
+	Const. clus. 01-jul-15	& 83.13		& 83.46		& 93.19		\\
+	Const. clus. 08-jul-15 	& 84.56		& 84.89		& 94.11		\\
 	\hline
 	\hline
 	Oracle propagation 	& \multirow{2}{*}{96.84}		& \multirow{2}{*}{96.84}		& \multirow{2}{*}{97.25}	\\
@@ -261,13 +261,13 @@ In Table~\ref{tab:precions_and_recall} we report the mean precision and recall o
   \centering
   \begin{tabular}{|l|c|c|}
     \hline
-	Run 				& Precision(\%)	& Recall(\%)		\\
+	Run 						& Precision(\%)	& Recall(\%)		\\
 	\hline
 	\hline
-	baseline			& 79.1			& 74.8			\\
+	Baseline					& 79.1			& 74.8			\\
 	\hline
-	limsi 01-jul-15 	& 98.5			& 82.9			\\
-	limsi 08-jul-15 	& 97.7			& 84.2			\\
+	Const. clus. 01-jul-15 	& 98.5			& 82.9			\\
+	Const. clus. 08-jul-15 	& 97.7			& 84.2			\\
   	\hline
   \end{tabular}
   \caption{Mean precision and recall}
